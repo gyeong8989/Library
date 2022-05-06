@@ -3,41 +3,40 @@ package com.korea.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.korea.dto.BookDTO;
+import com.korea.dto.DTO;
 
 public class FrontController
-{
-	//서브컨트롤러를 담는 컬렉션 지정  서브컨트롤러 등록 시키는 작업 (컬렉션) 
-	Map<String,SubController> map = new HashMap();  //서브컨트롤러 인페에 상속관계에있다 상위클래 참조변수로 업캐스팅
+{		
+	//서브컨트롤러 저장용
 	
-	public FrontController()  // 하위개개체 연결  ???????????
+	private Map<String, SubController> map = new HashMap<>();  //프론트에 해쉬맵이라고 있는 키는 String
+
+	//벨류는 서브컨트롤러 로 인터페이스 참조변수 지금 맘약 상위클래스 참조 변수로  
+	
+	public FrontController()
 	{
-		Init(); 
+		Init(); // ma 에 Init 에 지정된 대로 서브컨트롤러가 추가됨
 	}
-	
-	//서브컨트롤러를 Map 에 등록
-	void Init()
+	//등록할 서비스 지정
+	private void Init()
 	{
 		map.put("BOOK", new BookController());
 		map.put("AUTH", new AuthController());
-//		map.put("EMPLOYEE", new EmployeeController());
-//		map.put("MEMBER", new MemberController());
+		
 	}
-	public void SubConExecute(String menu,int num,BookDTO dto)
+	//MAP 에 있는 서브컨트롤러를 꺼내어 해당 컨트롤러를 실행하는 함수
+	public boolean SubControllerEX(String menu, int num, DTO dto)
 	{
-		if(menu.equals("BOOK"))
-		{
-			
-			//도서관련 요청  (1 : 조회,2 : 삽입,3 : 수정, 4 : 삭제)
-			SubController sub = map.get("BOOK");  //Bookcontroller 를 map 에서 꺼내옴
-			sub.execute(num, dto);    //특정한 도서 수정인지 재정의된 함수 사용  ..//요청번호, 도서정보를 bookcontroller의 execute로 전달
-			
-		}else if(menu.equals("AUTH"))
-		{
-			//로그인 or 로그아웃 요청
-		}else if(menu.equals("MEMBER"))
-		{
-			//멤버관련 요청(멤버조회,수정,탈퇴)
-		}
+		SubController tmp;
+		if(menu.equals("BOOK")){
+			tmp = map.get("BOOK"); // Book Controller 를 꺼내어 tmp 에 연결
+			return tmp.execute(num, dto);   // 서브컨트롤러 execute 실후 결과(true/false)를 view로 전달
+											//num : 1 (조회) 2(삽입) 3(수정) 3(삭제) 
+		}else if(menu.equals("AUTH")) {
+			tmp = map.get("AUTH"); // authcontroller 를 꺼내어 tmp 에 연결
+			return tmp.execute(num, dto); //서브컨트롤러 execute 실행 결과 (true/false) 를view 로 전달
+											// num == 1 회원로그인 / n um == 2 직원로그인
+	}
+		return false;
 	}
 }
